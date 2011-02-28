@@ -18,10 +18,12 @@ void loop()
   sendToCar();
 }
 
+//ethernet to arduino code
 void getEthernet()
 {
 }
 
+//arduino to car code
 void sendToCar()
 {
 }
