@@ -3,7 +3,7 @@
 This is a library for the Arduino-compatible WiFly Shield available from
 SparkFun Electronics:
 
-  <http://www.sparkfun.com/commerce/product_info.php?products_id=9367> 
+  <http://sparkfun.com/products/9954> 
 
 The goal with this library is to make it--as much as possible--a "drop
 in" replacement for the official Arduino Ethernet library
@@ -16,13 +16,13 @@ The library also provides a high-level interface for the "SC16IS750
 I2C/SPI-to-UART IC" used in the WiFly shield but also available on a
 separate breakout board:
 
-   <http://www.sparkfun.com/commerce/product_info.php?products_id=9745> .
+   <http://www.sparkfun.com/products/9981>
 
 
 = Usage =
 
-This is how you connect to a wireless network and use DHCP to obtain
-an IP address and DNS configuration:
+This is how you connect to a WPA wireless network with a passphrase
+and use DHCP to obtain an IP address and DNS configuration:
 
 ----
 #include "WiFly.h"
@@ -39,8 +39,33 @@ void setup() {
 }
 ---
 
-From then on you can use the Client and Server classes (re-implemented
-for the WiFly) mostly as normal.
+If the network you want to connect to has no passphrase you can use this form:
+
+---
+  if (!WiFly.join("ssid")) {
+     // Handle the failure
+  }
+---
+
+If the network you want to connect to is using WEP use this form:
+
+---
+  if (!WiFly.join("NETWORK", "00112233445566778899AABBCC", WEP_MODE)) {
+     // Handle the failure
+  }
+---
+
+Note the description of the WEP key from the WiFly user guide:
+
+ * Key must be EXACTLY 26 ASCII characters representing 13 bytes.
+
+ * In HEX format, hex digits > 9 can be either upper or lower case.
+ 
+ * "The Wifly GSX only supports “open” key mode, 128 bit keys for WEP."
+
+Whatever connection method you use, once you have joined you can use
+the Client and Server classes (re-implemented for the WiFly) mostly as
+normal.
 
 You can supply a domain name rather than an IP address for client
 connections:
@@ -60,6 +85,36 @@ This release of the library comes with three examples:
 For each example you will need to modify the file "Credentials.h" to
 supply your network's name (SSID) and passphrase.
 
+There are also some troubleshooting tools:
+
+  * SpiUartTerminal: enter command mode and send commands manually
+  * HardwareFactoryReset: hardware factory reset a WiFly module
+
+
+= Configuration =
+
+Different revisions of the WiFly shield support different features. If
+you are using an older revision of the shield you will need to modify
+the value of 'SHIELD_REVISION' in the file 'Configuration.h' to
+indicate which revision of the WiFly shield you are using. See the
+documentation in the file for further detail.
+
+The value defaults to the most recent revision sold at the time of
+code release.
+
+
+= Arduino Mega support =
+
+This library supports using the WiFly Shield with the Arduino Mega if
+four jumper wires are added. The following connections are required:
+
+ * Mega pin 53 to shield pin 10
+ * Mega pin 51 to shield pin 11
+ * Mega pin 50 to shield pin 12
+ * Mega pin 52 to shield pin 13
+
+In addition, code on the Mega must not use pins 10, 11, 12, or 13.
+
 
 = Known Issues =
 
@@ -69,12 +124,11 @@ works in most cases.
 
 There are some known issues:
 
- * Only supports WPA networks with passwords. If you have a network
-   without a passphrase then it should work if you supply a dummy
-   passphrase. If you have a WEP network you should probably change it
-   to use WPA instead. :) If that's not an option then it should be
-   possible to change the library code to set the WEP key rather than
-   a WPA passphrase.
+ * Connections to WEP networks have not really been tested--please try
+   it out and provide feedback. At the moment adhoc networks of any
+   type are not supported--the module supports them, the library just
+   hasn't been modified to recognise the different way the module
+   responds when connecting.
 
  * Incomplete documentation.
 
@@ -124,6 +178,38 @@ Please email <spark@sparkfun.com> or leave a comment on the SparkFun forums:
 
 
 = Changelog =
+
++ alpha 2 -- 17 December 2010 -- "Azalea Galaxy"
+
+  * NOTE: New configuration location! You now need to modify the value
+    	  of 'SHIELD_REVISION' in the file 'Configuration.h' to
+    	  indicate what revision of the WiFly shield you are
+    	  using. See the documentation in the file for further
+    	  detail. The value defaults to the most recent revision sold
+    	  at the time of the code release.
+
+  * Added support for joining Open networks (i.e. without a passphrase or key).
+
+  * Added (untested) WEP network support.
+
+  * Modified software reboot to hopefully work more reliably.
+
+  * Added support for hardware reset which should be more reliable than
+    software reboot on board revisions that support it (currently only the
+    most recent revision).
+
+  * Modified command mode entry method to hopefully work more
+    reliably.  Includes use of guard time as originally inspired by
+    World Mood Light.
+
+  * Added 'SpiUartTerminal' troubleshooting tool.
+
+  * Added 'HardwareFactoryReset' tool to help with troubleshooting.
+
+  * Added support for further board revision feature support configuration.
+
+  * Added some debugging support.
+
 
 + alpha 1 -- 31 August 2010 -- "August Gratitude"
 
