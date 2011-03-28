@@ -2,7 +2,9 @@
 #ifndef __SPIUART_H__
 #define __SPIUART_H__
 
-#include "Spi.h"
+#include "Configuration.h"
+
+#include "_Spi.h"
 
 // Until we implement a bulk transfer method that takes into account
 // the available space in the transmit buffer we will disable bulk transfers.
@@ -11,7 +13,7 @@
 // Disabling the transfers means we use the standard byte-at-time routine
 // from the Print class.
 // This isn't a big issue at 9600 baud at least because sending things
-// a byte at a time doesn't slow us down noticably.
+// a byte at a time doesn't slow us down noticeably.
 // TODO: Implement better bulk transfer method
 #define ENABLE_BULK_TRANSFERS 0
 
@@ -48,11 +50,13 @@
 // See Chapter 11 of datasheet
 #define SPI_READ_MODE_FLAG 0x80
 
+#define BAUD_RATE_DEFAULT 9600 // WiFly default baudrate
+
 
 class SpiUartDevice : public SpiDevice, public Print {
   
   public:
-    void begin();
+    void begin(unsigned long baudrate = BAUD_RATE_DEFAULT);
     byte available();
     int read();
     void write(byte value);
@@ -63,12 +67,17 @@ class SpiUartDevice : public SpiDevice, public Print {
     using Print::write;
 #endif
     void flush();
+
+    // These are specific to the SPI UART
+    void ioSetDirection(unsigned char bits);
+    void ioSetState(unsigned char bits);
   
   private:
     void writeRegister(byte registerAddress, byte data);
     byte readRegister(byte registerAddress);
-    void initUart();
-    void configureUart();  
+    void initUart(unsigned long baudrate);
+    void configureUart(unsigned long baudrate);  
+    void setBaudRate(unsigned long baudrate);
     boolean uartConnected();
 };
 

@@ -75,23 +75,23 @@ boolean Client::connect() {
     // so the connection is already established.
   } else {
     // TODO: Track state more?
-    _WiFly.switchToCommandMode();
+    _WiFly.enterCommandMode();
     
     _WiFly.sendCommand("open ", true, "" /* TODO: Remove this dummy value */);
     
     if (_ip != NULL) {
       for (int index = 0; /* break inside loop*/ ; index++) {
-	_WiFly.uart.print(_ip[index], DEC);
-	if (index == 3) {
-	  break;
-	}
-	_WiFly.uart.print('.');
+        _WiFly.uart.print(_ip[index], DEC);
+        if (index == 3) {
+          break;
+        }
+        _WiFly.uart.print('.');
       }
     } else if (_domain != NULL) {
       _WiFly.uart.print(_domain);
     } else {
       while (1) {
-	// This should never happen
+        // This should never happen
       }
     }
     
@@ -167,7 +167,7 @@ void Client::stop() {
   // In the interests of getting something out the door--that somewhat
   // works--this is what we're going with at the moment.
 
-  _WiFly.switchToCommandMode();
+  _WiFly.enterCommandMode();
   _WiFly.uart.println("close");
   // We ignore the response which could be "*CLOS*" or could be an
   // error if the connection is no longer open.
@@ -194,7 +194,7 @@ void Client::stop() {
 Client::operator bool() {
   /*
    */
-  // NOTE: Inkeeping with the Ethernet Client class
+  // NOTE: In keeping with the Ethernet Client class
   //       we use _ip == NULL, _domain == NULL, _port = 0 to
   //       indicate Server.available() found no connection.
   //       We use _ip == NULL, _domain == NULL, _port !=0 to

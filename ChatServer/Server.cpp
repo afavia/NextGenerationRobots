@@ -55,7 +55,7 @@ Client& Server::available() {
       } else {
 	// Ignore other feedback from the WiFly module.
 	// TODO: Should we check we're not ditching a connect accidentally?
-	//WiFly.skipRemainderOfResponse();
+	WiFly.skipRemainderOfResponse();
 	WiFly.uart.flush();
       }
     }
